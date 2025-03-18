@@ -15,6 +15,13 @@ void bubbleSort(CRGB arr[], int n) {
       int next = arr[j+1].r + arr[j+1].g + arr[j+1].b;
       if (total > next) {
         // Swap values
+        CRGB  temp_show  = arr[j];
+        arr[j] = CRGB(255,255,255);
+        FastLED.show();
+        delay(250);
+        arr[j] = temp_show;
+
+
         CRGB temp = arr[j];
         arr[j] = arr[j+1];
         arr[j+1] = temp;
@@ -38,16 +45,8 @@ void setup() {
         leds[i] = CHSV(hue, 255, 255); // Cor cheia, saturação máxima, brilho máximo
     }
 
-    for (int i = 0 ; i < NUM_LEDS; i ++){
-      int change = random(0,NUM_LEDS);
-        CRGB temp = leds[i];
-        leds[i] = leds[change];
-        leds[change] = temp;
-      
-    }
-    bubbleSort(leds,100);
-
     FastLED.show();
+    bubbleSort(leds,NUM_LEDS);
 }
 
 
