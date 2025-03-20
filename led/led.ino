@@ -6,7 +6,6 @@
 
 CRGB leds[NUM_LEDS];
 
-// Bubble Sort function with LED updates on every swap
 void bubbleSort(CRGB arr[], int n) {
   for (int i = 0; i < n-1; i++) {
     for (int j = 0; j < n-i-1; j++) {
@@ -27,7 +26,7 @@ void bubbleSort(CRGB arr[], int n) {
         arr[j+1] = temp;
 
         FastLED.show();
-        delay(50);  // Wait for 100ms to visualize the change
+        delay(50);
       }
     }
   }
@@ -40,9 +39,10 @@ void setup() {
     FastLED.setBrightness(50); 
 
     // Preencher os LEDs com um gradiente seguindo o espectro visível
+    int b = 250;
     for (int i = 0; i < NUM_LEDS; i++) {
-        uint8_t hue = map(i, 0, NUM_LEDS - 1, 0, 170);  // De vermelho (0) a violeta (170)
-        leds[i] = CHSV(hue, 255, 255); // Cor cheia, saturação máxima, brilho máximo
+        leds[i] = CRGB(0,0,b);
+        b -= 19; // Cor cheia, saturação máxima, brilho máximo
     }
 
     FastLED.show();
@@ -55,4 +55,3 @@ void loop() {
   setup();
   // The sorting happens in setup, so loop is not used
 }
-
