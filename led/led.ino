@@ -1,57 +1,57 @@
-#include <FastLED.h>
 
 #define LED_PIN     7
 #define NUM_LEDS    100
-
+#define NUM_CORES   256  // Ajuste para variação maior de cores
 
 CRGB leds[NUM_LEDS];
+CRGB cores[NUM_CORES];
 
+// Gerar um espectro de cores suave
+void gerar_cores() {
+  for (int i = 0; i < NUM_CORES; i++) {
+    cores[i] = CHSV(i, 255, 255);  // Hue variando de 0 a 255, máxima saturação e brilho
+  }
+}
+
+// Função modificada para ordenar com pesos diferentes para RGB
 void bubbleSort(CRGB arr[], int n) {
   for (int i = 0; i < n-1; i++) {
     for (int j = 0; j < n-i-1; j++) {
-      // Swap if the element is greater than the next
-      int total = arr[j].r + arr[j].g + arr[j].b;
-      int next = arr[j+1].r + arr[j+1].g + arr[j+1].b;
+      // Aplicando pesos diferenciados para cada canal
+      int total = arr[j].r * 0.3 + arr[j].g * 0.59 + arr[j].b * 0.11;   // Ponderação perceptual
+      int next = arr[j+1].r * 0.3 + arr[j+1].g * 0.59 + arr[j+1].b * 0.11;
+
       if (total > next) {
-        // Swap values
-        CRGB  temp_show  = arr[j];
-        arr[j] = CRGB(255,255,255);
-        FastLED.show();
-        delay(250);
-        arr[j] = temp_show;
-
-
+        // Troca
         CRGB temp = arr[j];
         arr[j] = arr[j+1];
         arr[j+1] = temp;
 
         FastLED.show();
-        delay(50);
+        delay(10);  // Reduzi o delay para suavizar o efeito
       }
     }
   }
 }
 
-
-
 void setup() {
-    FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
-    FastLED.setBrightness(50); 
+  FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
+  FastLED.setBrightness(100);
 
-    // Preencher os LEDs com um gradiente seguindo o espectro visível
-    int b = 250;
-    for (int i = 0; i < NUM_LEDS; i++) {
-        leds[i] = CRGB(0,0,b);
-        b -= 19; // Cor cheia, saturação máxima, brilho máximo
-    }
+  gerar_cores();  // Criar a paleta de cores
 
-    FastLED.show();
-    bubbleSort(leds,NUM_LEDS);
+  // Preencher LEDs com cores do espectro
+  for (int i = 0; i < NUM_LEDS; i++) {
+    int valorAleatorio = random(NUM_CORES);
+    leds[i] = cores[valorAleatorio];
+  }
+
+  FastLED.show();
+  bubbleSort(leds, NUM_LEDS);  // Ordenar visualmente
 }
-
 
 void loop() {
   delay(5000);
-  setup();
-  // The sorting happens in setup, so loop is not used
+  setup();  // Reinicia para novo efeito
 }
+
